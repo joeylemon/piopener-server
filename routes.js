@@ -42,11 +42,11 @@ export async function history(req, res) {
     if (user instanceof Error)
         return res.status(401).send(constants.ERR_UNAUTHORIZED)
 
-    const actions = await db.getHistory().catch(err => new Error(err))
+    const actions = await db.getHistory(req.params.page).catch(err => new Error(err))
     if (actions instanceof Error)
         return res.status(500).send(actions.toString())
 
-    res.status(200).send(JSON.stringify(actions))
+    res.status(200).send(actions)
 }
 
 /**

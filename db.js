@@ -1,6 +1,7 @@
 import mysql from 'mysql'
 import moment from 'moment-timezone'
 import * as config from './config.js'
+import * as constants from './constants.js'
 
 const pool = mysql.createPool({
     host: config.get("mysql.host"),
@@ -54,12 +55,19 @@ export function addHistory(user, status) {
 /**
  * Get the list of actions from the history
  */
-export function getHistory() {
+export function getHistory(page) {
     return new Promise((resolve, reject) => {
         pool.getConnection((err, con) => {
             if (err) reject(err)
 
-            con.query('SELECT u.name as name,u.red as red,u.green as green,u.blue as blue,h.date as date, IF(h.closed_status=1, "Opened", "Closed") as action FROM history h LEFT JOIN users u ON u.id=h.user_id ORDER BY h.date desc LIMIT 150', [], (err, results) => {
+            con.query(`
+            SELECT u.name as name,
+            u.red as red,u.green as green,u.blue as blue,
+            h.date as date, 
+            IF(h.closed_status=1, "Opened", "Closed") as action 
+            FROM history h 
+            LEFT JOIN users u ON u.id=h.user_id 
+            ORDER BY h.date desc LIMIT ?, ?`, [(page - 1) * constants.HISTORY_PAGE_SIZE, constants.HISTORY_PAGE_SIZE], (err, results) => {
                 con.release()
                 if (err) reject(err)
 
