@@ -18,10 +18,6 @@ export async function move(req, res) {
         return res.status(500).send(constants.ERR_EXCESSIVE_REQUESTS)
     }
 
-    const status = await garage.getClosedStatus().catch(err => new Error(err))
-    if (status instanceof Error)
-        return res.status(500).send(status.toString())
-
     // If the garage is already open, do nothing
     if (req.params.mode === "open" && status === "false")
         return res.status(500).send(constants.ERR_ALREADY_OPEN)
@@ -29,8 +25,13 @@ export async function move(req, res) {
     utils.resetOpenTimer()
 
     db.addHistory(user, status)
-    res.status(200).send(status)
     garage.sendMoveRequest()
+
+    const status = await garage.getClosedStatus().catch(err => new Error(err))
+    if (status instanceof Error)
+        return res.status(500).send(constants.ERR_BAD_SENSOR)
+
+    res.status(200).send(status)
 }
 
 /**
@@ -76,7 +77,10 @@ export async function status(req, res) {
     if (user instanceof Error)
         return res.status(401).send(constants.ERR_UNAUTHORIZED)
 
-    const status = await garage.getClosedStatus()
+    const status = await garage.getClosedStatus().catch(err => new Error(err))
+    if (status instanceof Error)
+        return res.status(500).send(constants.ERR_BAD_SENSOR)
+
     res.status(200).send(status)
 }
 

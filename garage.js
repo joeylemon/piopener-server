@@ -7,7 +7,10 @@ import * as config from './config.js'
  */
 export function sendMoveRequest() {
     return new Promise((resolve, reject) => {
-        request(`http://${config.get("pi.ip")}:${config.get("pi.port")}/move/${config.get("secret")}`, (error, response, body) => {
+        request({
+            url: `http://${config.get("pi.ip")}:${config.get("pi.port")}/move/${config.get("secret")}`,
+            timeout: 2000
+        }, (error, response, body) => {
             if (error || response.statusCode != 200)
                 reject(error)
 
@@ -21,7 +24,10 @@ export function sendMoveRequest() {
  */
 export function getClosedStatus() {
     return new Promise((resolve, reject) => {
-        request(`http://${config.get("pi.ip")}:${config.get("pi.port")}/status/${config.get("secret")}`, (error, response, body) => {
+        request({
+            url: `http://${config.get("pi.ip")}:${config.get("pi.port")}/status/${config.get("secret")}`,
+            timeout: 2000
+        }, (error, response, body) => {
             if (error || response.statusCode != 200)
                 reject(error)
 
