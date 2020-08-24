@@ -86,15 +86,17 @@ export async function status(req, res) {
 
 /**
  * Endpoint for updating the ip of the Pi
- * https://jlemon.org/garage/setip
+ * https://jlemon.org/garage/updateip
  */
 export async function updateIP(req, res) {
     const user = await db.findUser(req.params.token).catch(err => new Error(err))
     if (user instanceof Error)
         return res.status(401).send(constants.ERR_UNAUTHORIZED)
 
+    const ip = utils.getRequestIP(req)
+
     const conf = config.getConfig()
-    conf.pi.ip = req.params.ip
+    conf.pi.ip = ip
     config.setConfig(conf)
 
     res.status(200).send("200 OK")

@@ -1,4 +1,4 @@
-import * as constants from './constants.js' 
+import * as constants from './constants.js'
 
 let lastOpen = 0
 
@@ -14,4 +14,16 @@ export function canOpen() {
  */
 export function resetOpenTimer() {
     lastOpen = Date.now()
+}
+
+/**
+ * Get the ip address of an http request
+ * @param req The request object
+ * @return The ip address string
+ */
+export function getRequestIP(req) {
+    return (req.headers['x-forwarded-for'] || '').split(',').pop().trim() ||
+        req.connection.remoteAddress ||
+        req.socket.remoteAddress ||
+        req.connection.socket.remoteAddress
 }
