@@ -94,6 +94,7 @@ export async function updateIP(req, res) {
         return res.status(401).send(constants.ERR_UNAUTHORIZED)
 
     const ip = utils.getRequestIP(req)
+    console.log(`request to update ip to: "${ip}"`)
 
     const conf = config.getConfig()
     conf.pi.ip = ip
