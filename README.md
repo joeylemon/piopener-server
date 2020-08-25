@@ -10,9 +10,7 @@ After continuously losing, forgetting, or otherwise destroying our garage door o
 
 ### How?
 
-During the aforementioned destruction of a garage door opener, I noticed the circuit board inside was extremely simple: a single battery and two buttons with lots of space for soldering. So, after investing in a soldering iron, we went to work on attempting to wire up a circuit between the Raspberry Pi and the opener circuit. A very short amount of time later (or maybe a few hours since we've never soldered before), we had a working circuit in which we could send a signal from the Raspberry Pi to the garage door opener to open the garage.
-
-This only solved how to open the garage door programatically, we still needed a way to see if the door was currently open or closed. We decided to buy a few magnetic reed switches and mount them on the garage door and its frame. So, when the door opens, the circuit closes and we know the door is open.
+We soldered two wires from the Raspberry Pi to the circuit board inside of one of our garage door openers, allowing us to send a signal programatically to the door opener. This allows us to set up the endpoint for opening and closing the garage door. In order to check of the status of the door (opened or closed), we wired one magnetic reed switch to the Pi and one to the garage door, allowing us to check if the door is closed if the switches are connected.
 
 ### What is piopener-server?
 
