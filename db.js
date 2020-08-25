@@ -35,14 +35,14 @@ export function findUser(token) {
 /**
  * Add an action to the list of history
  * @param {Object} user The user object from the database (and findUser() function)
- * @param {String} status The closed status of the garage door ("true" or "false")
+ * @param {String} status The status of the garage door ("open", "closed", or "between")
  */
 export function addHistory(user, status) {
     return new Promise((resolve, reject) => {
         pool.getConnection((err, con) => {
             if (err) reject(err)
 
-            con.query("INSERT INTO history (user_id,date,closed_status) VALUES (?, UNIX_TIMESTAMP(), ?)", [user.id, status === "true" ? 1 : 0], (err, results) => {
+            con.query("INSERT INTO history (user_id,date,closed_status) VALUES (?, UNIX_TIMESTAMP(), ?)", [user.id, status === "closed" ? 1 : 0], (err, results) => {
                 con.release()
                 if (err) reject(err)
 

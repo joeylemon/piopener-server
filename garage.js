@@ -22,7 +22,7 @@ export function sendMoveRequest() {
 /**
  * Send a request to the Pi to read the magnetic switch to determine the garage position
  */
-export function getClosedStatus() {
+export function getStatus() {
     return new Promise((resolve, reject) => {
         request({
             url: `http://${config.get("pi.ip")}:${config.get("pi.port")}/status/${config.get("secret")}`,
