@@ -53,7 +53,8 @@ export function addHistory(user, status) {
 }
 
 /**
- * Get the list of actions from the history
+ * Get the list of actions from the history for the given page
+ * @param {number} page The page of history to retrieve
  */
 export function getHistory(page) {
     return new Promise((resolve, reject) => {
@@ -100,6 +101,33 @@ export function getHistory(page) {
                         Title: t,
                         Entries: sections[t]
                     }
+                }))
+            })
+        })
+    })
+}
+
+/**
+ * Get the entire list of history
+ */
+export function getAllHistory() {
+    return new Promise((resolve, reject) => {
+        pool.getConnection((err, con) => {
+            if (err) reject(err)
+
+            con.query(`
+            SELECT u.name as name,
+            h.date as date, 
+            IF(h.closed_status=1, "Opened", "Closed") as action 
+            FROM history h 
+            LEFT JOIN users u ON u.id=h.user_id 
+            ORDER BY h.date desc`, [], (err, results) => {
+                con.release()
+                if (err) reject(err)
+
+                resolve(results.map(row => {
+                    const time = moment(row.date * 1000).tz("America/New_York")
+                    return { name: row.name, date: time.format(), action: row.action }
                 }))
             })
         })

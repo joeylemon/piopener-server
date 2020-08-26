@@ -5,18 +5,30 @@ import * as utils from './utils.js'
 import * as config from './config.js'
 
 /**
+ * Middleware function for authorizing the request
+ */
+export async function auth(req, res, next) {
+    const user = await db.findUser(req.params.token).catch(err => new Error(err))
+    if (user instanceof Error) {
+        return res.status(401).send(constants.ERR_UNAUTHORIZED)
+    }
+
+    next()
+}
+
+/**
  * Endpoint for moving the garage
  * https://jlemon.org/garage/{move,open}
  */
 export async function move(req, res) {
-    const user = await db.findUser(req.params.token).catch(err => new Error(err))
-    if (user instanceof Error)
-        return res.status(401).send(constants.ERR_UNAUTHORIZED)
-
     // Don't allow too many open requests to be sent at one time
     if (!utils.canOpen()) {
         return res.status(500).send(constants.ERR_EXCESSIVE_REQUESTS)
     }
+
+    // Ensure a correct mode is given
+    if (req.params.mode !== "open" && req.params.mode !== "move")
+        return res.status(500).send(constants.ERR_INVALID_MODE)
 
     const status = await garage.getStatus().catch(err => new Error(err))
     if (status instanceof Error)
@@ -35,14 +47,22 @@ export async function move(req, res) {
 }
 
 /**
- * Endpoint for getting the open/close history
+ * Endpoint for getting all of the open/close history
+ * https://jlemon.org/garage/history/all
+ */
+export async function allHistory(req, res) {
+    const actions = await db.getAllHistory().catch(err => new Error(err))
+    if (actions instanceof Error)
+        return res.status(500).send(actions.toString())
+
+    res.status(200).send(actions)
+}
+
+/**
+ * Endpoint for getting a page of the open/close history
  * https://jlemon.org/garage/history
  */
 export async function history(req, res) {
-    const user = await db.findUser(req.params.token).catch(err => new Error(err))
-    if (user instanceof Error)
-        return res.status(401).send(constants.ERR_UNAUTHORIZED)
-
     const actions = await db.getHistory(req.params.page).catch(err => new Error(err))
     if (actions instanceof Error)
         return res.status(500).send(actions.toString())
@@ -55,10 +75,6 @@ export async function history(req, res) {
  * https://jlemon.org/garage/history/add
  */
 export async function addHistory(req, res) {
-    const user = await db.findUser(req.params.token).catch(err => new Error(err))
-    if (user instanceof Error)
-        return res.status(401).send(constants.ERR_UNAUTHORIZED)
-
     if (!utils.canOpen()) {
         return res.status(500).send(constants.ERR_EXCESSIVE_REQUESTS)
     }
@@ -73,10 +89,6 @@ export async function addHistory(req, res) {
  * https://jlemon.org/garage/status
  */
 export async function status(req, res) {
-    const user = await db.findUser(req.params.token).catch(err => new Error(err))
-    if (user instanceof Error)
-        return res.status(401).send(constants.ERR_UNAUTHORIZED)
-
     const status = await garage.getStatus().catch(err => new Error(err))
     if (status instanceof Error)
         return res.status(500).send(constants.ERR_BAD_SENSOR)
@@ -89,10 +101,6 @@ export async function status(req, res) {
  * https://jlemon.org/garage/updateip
  */
 export async function updateIP(req, res) {
-    const user = await db.findUser(req.params.token).catch(err => new Error(err))
-    if (user instanceof Error)
-        return res.status(401).send(constants.ERR_UNAUTHORIZED)
-
     const ip = utils.getRequestIP(req)
     console.log(`request to update ip to: "${ip}"`)
 
