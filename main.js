@@ -4,7 +4,7 @@ import express from 'express'
 const app = express()
 
 // Endpoint for getting all of the open/close history
-app.get('/history/all/:token', routes.auth, routes.allHistory)
+app.get('/history/all', routes.allHistory)
 
 // Endpoint for getting a page of the open/close history
 app.get('/history/:page/:token', routes.auth, routes.history)

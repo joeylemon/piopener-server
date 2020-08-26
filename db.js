@@ -117,6 +117,7 @@ export function getAllHistory() {
 
             con.query(`
             SELECT u.name as name,
+            u.red as red,u.green as green,u.blue as blue,
             h.date as date, 
             IF(h.closed_status=1, "Opened", "Closed") as action 
             FROM history h 
@@ -127,7 +128,12 @@ export function getAllHistory() {
 
                 resolve(results.map(row => {
                     const time = moment(row.date * 1000).tz("America/New_York")
-                    return { name: row.name, date: time.format(), action: row.action }
+                    return {
+                        name: row.name,
+                        color: [row.red, row.green, row.blue],
+                        date: time.format(),
+                        action: row.action
+                    }
                 }))
             })
         })
