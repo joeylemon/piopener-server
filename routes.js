@@ -96,9 +96,7 @@ export async function updateIP(req, res) {
     const ip = utils.getRequestIP(req)
     console.log(`request to update ip to: "${ip}"`)
 
-    const conf = config.getConfig()
-    conf.pi.ip = ip
-    config.setConfig(conf)
+    config.set("pi.ip", ip)
 
     res.status(200).send("200 OK")
 }
