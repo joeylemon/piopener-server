@@ -23,7 +23,7 @@ export async function move(req, res) {
         return res.status(500).send(constants.ERR_BAD_SENSOR)
 
     // If the garage is already open, do nothing
-    if (req.params.mode === "open" && status === "open")
+    if (req.params.mode === "open" && status !== "closed")
         return res.status(500).send(constants.ERR_ALREADY_OPEN)
 
     utils.resetOpenTimer()
