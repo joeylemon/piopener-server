@@ -1,5 +1,4 @@
 import request from 'request'
-import * as constants from './constants.js'
 import * as config from './config.js'
 
 /**

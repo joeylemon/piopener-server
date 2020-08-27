@@ -9,3 +9,6 @@ forever:
 
 stop:
 	forever stop $(UID)
+
+log:
+	tail -fn 500 /home/dustin/.forever/piopener.log
