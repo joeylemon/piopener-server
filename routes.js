@@ -3,6 +3,7 @@ import * as garage from './garage.js'
 import * as constants from './constants.js'
 import * as utils from './utils.js'
 import * as config from './config.js'
+import * as logger from './logger.js'
 
 /**
  * Middleware function for authorizing the request
@@ -10,9 +11,12 @@ import * as config from './config.js'
 export async function auth(req, res, next) {
     const user = await db.findUser(req.params.token).catch(err => new Error(err))
     if (user instanceof Error) {
+        logger.printf("token %s was attempted to authorize but failed", req.params.token)
         return res.status(401).send(constants.ERR_UNAUTHORIZED)
     }
 
+    logger.printf("authorized token %s to user %s", req.params.token, user.name)
+    res.locals.user = user
     next()
 }
 
@@ -23,24 +27,32 @@ export async function auth(req, res, next) {
 export async function move(req, res) {
     // Don't allow too many open requests to be sent at one time
     if (!utils.canOpen()) {
+        logger.printf("request to move garage failed: another request was sent within the last %d seconds", constants.OPEN_DELAY)
         return res.status(500).send(constants.ERR_EXCESSIVE_REQUESTS)
     }
 
     // Ensure a correct mode is given
-    if (req.params.mode !== "open" && req.params.mode !== "move")
+    if (req.params.mode !== "open" && req.params.mode !== "move") {
+        logger.printf("move route was requested with invalid mode %s", req.params.mode)
         return res.status(500).send(constants.ERR_INVALID_MODE)
+    }
 
     const status = await garage.getStatus().catch(err => new Error(err))
-    if (status instanceof Error)
+    if (status instanceof Error) {
+        logger.printf("could not get garage status: %s", status.toString())
         return res.status(500).send(constants.ERR_BAD_SENSOR)
+    }
 
     // If the garage is already open, do nothing
-    if (req.params.mode === "open" && status !== "closed")
+    if (req.params.mode === "open" && status !== "closed") {
+        logger.printf("request was sent to open garage but status was %s", status)
         return res.status(500).send(constants.ERR_ALREADY_OPEN)
+    }
 
     utils.resetOpenTimer()
 
-    db.addHistory(user, status)
+    logger.printf("moving garage for %s", res.locals.user.name)
+    db.addHistory(res.locals.user, status)
     garage.sendMoveRequest()
 
     res.status(200).send(status)
@@ -52,9 +64,12 @@ export async function move(req, res) {
  */
 export async function allHistory(req, res) {
     const actions = await db.getAllHistory().catch(err => new Error(err))
-    if (actions instanceof Error)
+    if (actions instanceof Error) {
+        logger.printf("could not get history: %s", actions.toString())
         return res.status(500).send(actions.toString())
+    }
 
+    logger.printf("retrieving all history for %s", res.locals.user.name)
     res.status(200).send(actions)
 }
 
@@ -64,9 +79,12 @@ export async function allHistory(req, res) {
  */
 export async function history(req, res) {
     const actions = await db.getHistory(req.params.page).catch(err => new Error(err))
-    if (actions instanceof Error)
+    if (actions instanceof Error) {
+        logger.printf("could not get history: %s", actions.toString())
         return res.status(500).send(actions.toString())
+    }
 
+    logger.printf("retrieving page %d of history for %s", req.params.page, res.locals.user.name)
     res.status(200).send(actions)
 }
 
@@ -76,10 +94,12 @@ export async function history(req, res) {
  */
 export async function addHistory(req, res) {
     if (!utils.canOpen()) {
+        logger.printf("request to manually add history failed: a move request was sent within the last %d seconds", constants.OPEN_DELAY)
         return res.status(500).send(constants.ERR_EXCESSIVE_REQUESTS)
     }
 
-    db.addHistory(user, req.params.status)
+    logger.printf("adding history for %s", res.locals.user.name)
+    db.addHistory(res.locals.user, req.params.status)
         .then(res.status(200).send("200 OK"))
         .catch(err => res.status(500).send(err.toString()))
 }
@@ -90,9 +110,12 @@ export async function addHistory(req, res) {
  */
 export async function status(req, res) {
     const status = await garage.getStatus().catch(err => new Error(err))
-    if (status instanceof Error)
+    if (status instanceof Error) {
+        logger.printf("could not get garage status: %s", status.toString())
         return res.status(500).send(constants.ERR_BAD_SENSOR)
+    }
 
+    logger.printf("getting garage status for %s", res.locals.user.name)
     res.status(200).send(status)
 }
 
@@ -102,9 +125,8 @@ export async function status(req, res) {
  */
 export async function updateIP(req, res) {
     const ip = utils.getRequestIP(req)
-    console.log(`request to update ip to: "${ip}"`)
 
+    logger.printf("updating pi ip to %s", ip)
     config.set("pi.ip", ip)
-
     res.status(200).send("200 OK")
 }
