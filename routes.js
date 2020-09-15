@@ -69,7 +69,6 @@ export async function allHistory(req, res) {
         return res.status(500).send(actions.toString())
     }
 
-    logger.printf("retrieving all history for %s", res.locals.user.name)
     res.status(200).send(actions)
 }
 

@@ -1,6 +1,9 @@
 // How often one can send an open request to the server
 export const OPEN_DELAY = 30
 
+// How long the garage needs to be open (in ms) to send notifications
+export const LONG_OPEN_DURATION = 900000
+
 // How many entries to load per page of history
 export const HISTORY_PAGE_SIZE = 100
 

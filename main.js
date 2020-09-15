@@ -1,5 +1,9 @@
 import * as routes from './routes.js'
+import * as notifications from './notifications.js'
 import express from 'express'
+
+// Start periodically checking status
+notifications.checkStatus()
 
 const app = express()
 

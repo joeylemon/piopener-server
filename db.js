@@ -11,24 +11,43 @@ const pool = mysql.createPool({
 })
 
 /**
+ * Perform a query on the database
+ * @param {string} query The SQL query to perform
+ * @param {array} params The list of parameters to inject in the query
+ * @param {function} mapFunction The mapping function to perform on the result set
+ */
+function query(query, params, mapFunction) {
+    return new Promise((resolve, reject) => {
+        pool.getConnection((err, con) => {
+            if (err) reject(err)
+
+            con.query(query, params, (err, results) => {
+                con.release()
+                if (err) return reject(err)
+
+                if (mapFunction)
+                    resolve(results.map(mapFunction))
+                else
+                    resolve(results)
+            })
+        })
+    })
+}
+
+/**
  * Search the database for the given user
  * @param {String} token The user's access token
  */
 export function findUser(token) {
     return new Promise((resolve, reject) => {
-        pool.getConnection((err, con) => {
-            if (err) reject(err)
-
-            con.query("SELECT * FROM users where token = ?", [token], (err, results) => {
-                con.release()
-                if (err) reject(err)
-
-                if (results.length > 0)
-                    resolve(results[0])
+        query("SELECT * FROM users where token = ?", [token])
+            .then(rows => {
+                if (rows.length > 0)
+                    resolve(rows[0])
                 else
                     reject("Couldn't find user")
             })
-        })
+            .catch(err => reject(err))
     })
 }
 
@@ -38,18 +57,7 @@ export function findUser(token) {
  * @param {String} status The status of the garage door ("open", "closed", or "between")
  */
 export function addHistory(user, status) {
-    return new Promise((resolve, reject) => {
-        pool.getConnection((err, con) => {
-            if (err) reject(err)
-
-            con.query("INSERT INTO history (user_id,date,closed_status) VALUES (?, UNIX_TIMESTAMP(), ?)", [user.id, status === "closed" ? 1 : 0], (err, results) => {
-                con.release()
-                if (err) reject(err)
-
-                resolve()
-            })
-        })
-    })
+    return query("INSERT INTO history (user_id,date,closed_status) VALUES (?, UNIX_TIMESTAMP(), ?)", [user.id, status === "closed" ? 1 : 0])
 }
 
 /**
@@ -58,23 +66,18 @@ export function addHistory(user, status) {
  */
 export function getHistory(page) {
     return new Promise((resolve, reject) => {
-        pool.getConnection((err, con) => {
-            if (err) reject(err)
-
-            con.query(`
-            SELECT u.name as name,
-            u.red as red,u.green as green,u.blue as blue,
-            h.date as date, 
-            IF(h.closed_status=1, "Opened", "Closed") as action 
-            FROM history h 
-            LEFT JOIN users u ON u.id=h.user_id 
-            ORDER BY h.date desc LIMIT ?, ?`, [(page - 1) * constants.HISTORY_PAGE_SIZE, constants.HISTORY_PAGE_SIZE], (err, results) => {
-                con.release()
-                if (err) reject(err)
-
+        query(`
+        SELECT u.name as name,
+        u.red as red,u.green as green,u.blue as blue,
+        h.date as date, 
+        IF(h.closed_status=1, "Opened", "Closed") as action 
+        FROM history h 
+        LEFT JOIN users u ON u.id=h.user_id 
+        ORDER BY h.date desc LIMIT ?, ?`, [(page - 1) * constants.HISTORY_PAGE_SIZE, constants.HISTORY_PAGE_SIZE])
+            .then(rows => {
                 // Create dict of weeks to their list of entries
                 let sections = new Array()
-                for (const row of results) {
+                for (const row of rows) {
                     const time = moment(row.date * 1000).tz("America/New_York")
                     //const title = time.format("MMMM Do YYYY")
                     const title = time.calendar(null, {
@@ -103,7 +106,7 @@ export function getHistory(page) {
                     }
                 }))
             })
-        })
+            .catch(err => reject(err))
     })
 }
 
@@ -111,31 +114,27 @@ export function getHistory(page) {
  * Get the entire list of history
  */
 export function getAllHistory() {
-    return new Promise((resolve, reject) => {
-        pool.getConnection((err, con) => {
-            if (err) reject(err)
-
-            con.query(`
-            SELECT u.name as name,
-            u.red as red,u.green as green,u.blue as blue,
-            h.date as date, 
-            IF(h.closed_status=1, "Opened", "Closed") as action 
-            FROM history h 
-            LEFT JOIN users u ON u.id=h.user_id 
-            ORDER BY h.date desc`, [], (err, results) => {
-                con.release()
-                if (err) reject(err)
-
-                resolve(results.map(row => {
-                    const time = moment(row.date * 1000).tz("America/New_York")
-                    return {
-                        name: row.name,
-                        color: [row.red, row.green, row.blue],
-                        date: time.format(),
-                        action: row.action
-                    }
-                }))
-            })
-        })
+    return query(`
+    SELECT u.name as name,
+    u.red as red,u.green as green,u.blue as blue,
+    h.date as date, 
+    IF(h.closed_status=1, "Opened", "Closed") as action 
+    FROM history h 
+    LEFT JOIN users u ON u.id=h.user_id 
+    ORDER BY h.date desc`, [], row => {
+        const time = moment(row.date * 1000).tz("America/New_York")
+        return {
+            name: row.name,
+            color: [row.red, row.green, row.blue],
+            date: time.format(),
+            action: row.action
+        }
     })
+}
+
+/**
+ * Get an array of iOS device tokens used to send remote notifications
+ */
+export function getNotificationTokens() {
+    return query("SELECT u.device_token FROM users u WHERE u.notify_on_long_open = TRUE", [], row => row.device_token)
 }
