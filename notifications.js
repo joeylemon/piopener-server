@@ -36,10 +36,8 @@ export function checkStatus() {
         }
 
         // If it's been too long since the garage was last seen closed, send a notification
-        if (getOpenTime() > constants.LONG_OPEN_DURATION) {
-            logger.printf("garage has been open for %d seconds", Math.floor((getOpenTime()) / 1000))
+        if (getOpenTime() > constants.LONG_OPEN_DURATION)
             return sendNotifications()
-        }
     }, 20000)
 }
 
@@ -59,6 +57,7 @@ async function sendNotifications() {
     const minutesOpen = Math.floor(getOpenTime() / 60000)
 
     // Send notifications to each device
+    logger.printf("garage has been open for %d minutes", Math.floor((getOpenTime()) / 60000))
     logger.printf("send notifications to [%s]", tokens.join(","))
     for (const t of tokens)
         sendNotification(t, minutesOpen)

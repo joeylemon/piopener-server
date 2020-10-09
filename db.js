@@ -136,5 +136,5 @@ export function getAllHistory() {
  * Get an array of iOS device tokens used to send remote notifications
  */
 export function getNotificationTokens() {
-    return query("SELECT u.device_token FROM users u WHERE u.notify_on_long_open = TRUE", [], row => row.device_token)
+    return query("SELECT u.device_token FROM users u WHERE u.notify_on_long_open = TRUE AND u.device_token IS NOT NULL", [], row => row.device_token)
 }
