@@ -7,6 +7,15 @@ notifications.checkStatus()
 
 const app = express()
 
+// Endpoint for getting a user's settings
+app.get('/settings/get/:token', routes.auth, routes.getAllSettings)
+
+// Endpoint for getting a user's settings
+app.get('/settings/get/:token/:setting', routes.auth, routes.getSetting)
+
+// Endpoint for updating a user's settings
+app.get('/settings/set/:token/:setting/:value', routes.auth, routes.setSettings)
+
 // Endpoint for getting all of the open/close history
 app.get('/history/all', routes.allHistory)
 

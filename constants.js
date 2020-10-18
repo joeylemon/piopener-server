@@ -1,4 +1,4 @@
-// How often one can send an open request to the server
+// How often one can send an open request to the server (in seconds)
 export const OPEN_DELAY = 30
 
 // How long the garage needs to be open (in ms) to send notifications

@@ -52,6 +52,67 @@ export function findUser(token) {
 }
 
 /**
+ * Get the user's settings
+ * @param {String} token The user's access token
+ */
+export function getAllSettings(token) {
+    return new Promise((resolve, reject) => {
+        query("SELECT notify_on_long_open, open_upon_arrival FROM users WHERE token = ?", [token])
+            .then(rows => {
+                const settings = rows[0]
+                const openingSections = {
+                    Name: "Openings and closings",
+                    Entries: [
+                        {
+                            SettingName: "Notify on long open time", 
+                            SettingKey: "notify_on_long_open", 
+                            Description: "Send a notification when the door has been open for a long time", 
+                            Enabled: settings.notify_on_long_open === 1
+                        },
+                        {
+                            SettingName: "Open door upon arrival", 
+                            SettingKey: "open_upon_arrival", 
+                            Description: "Automatically open the door when you arrive at the apartment", 
+                            Enabled: settings.open_upon_arrival === 1
+                        }
+                    ]
+                }
+
+                resolve([openingSections])
+            })
+            .catch(err => reject(err))
+    })
+}
+
+/**
+ * Get the user's specific setting
+ * @param {String} token The user's access token
+ */
+export function getSetting(token, setting) {
+    return new Promise((resolve, reject) => {
+        query("SELECT notify_on_long_open, open_upon_arrival FROM users WHERE token = ?", [token])
+            .then(rows => {
+                const settings = rows[0]
+                if (settings[setting] === undefined)
+                    reject("Setting does not exist")
+
+                resolve(settings[setting])
+            })
+            .catch(err => reject(err))
+    })
+}
+
+/**
+ * Get the user's settings
+ * @param {String} token The user's access token
+ * @param {String} setting The setting name to update
+ * @param {String} value The new value for the setting
+ */
+export function updateSettings(token, setting, value) {
+    return query(`UPDATE users SET ${setting} = ${value} WHERE token = ?`, [token])
+}
+
+/**
  * Add an action to the list of history
  * @param {Object} user The user object from the database (and findUser() function)
  * @param {String} status The status of the garage door ("open", "closed", or "between")
