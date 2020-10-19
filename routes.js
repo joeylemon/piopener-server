@@ -43,17 +43,21 @@ export async function move(req, res) {
         return res.status(500).send(constants.ERR_BAD_SENSOR)
     }
 
-    // If the garage is already open, do nothing
+    // If the garage is already open and mode is open-only, do nothing
     if (req.params.mode === "open" && status !== "closed") {
         logger.printf("request was sent to open garage but status was %s", status)
         return res.status(500).send(constants.ERR_ALREADY_OPEN)
     }
 
-    utils.resetOpenTimer()
+    const result = await garage.sendMoveRequest().catch(err => new Error(err))
+    if (result instanceof Error) {
+        logger.printf("could not move garage: %s", result.toString())
+        return res.status(500).send(constants.ERR_MOVE_ERROR)
+    }
 
+    utils.resetOpenTimer()
     logger.printf("moving garage for %s", res.locals.user.name)
     db.addHistory(res.locals.user, status)
-    garage.sendMoveRequest()
 
     res.status(200).send(status)
 }
