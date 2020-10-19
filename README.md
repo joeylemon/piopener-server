@@ -14,9 +14,8 @@ We soldered two wires from the Raspberry Pi to the circuit board inside of one o
 
 ### What is piopener-server?
 
-This repository is the code that lives on the Raspberry Pi which is wired up to the garage door opener. We have another [Raspberry Pi](https://github.com/joeylemon/piopener) in the garage wired to the reed switches; this Pi sends requests to the other Pi to get the open status of the garage. Additionally, the [iOS application](https://github.com/joeylemon/piopener-app) serves as an interface to this server.
+This repository is the code that lives on a dedicated server which serves as the dedicated backend to the piopener project. It includes every endpoint required to operate the piopener project, including opening and closing, checking status, checking history, changing user settings, etc. In order to actually open the garage, this server can send a request to the [Raspberry Pi](https://github.com/joeylemon/piopener-pi)'s ip address. The [iOS application](https://github.com/joeylemon/piopener-app) serves as the main interface to this server.
 
 #### Technologies:
-- Node.js: this Pi hosts a web server which receives requests for performing operations on the garage
-- MySQL: the Pi also stores the open and close history of the garage door, tying each event to a user
-- Raspberry Pi GPIO: the interface to the GPIO pins on the Pi allows the Node.js server to send electrical signals to the opener circuit board
+- Node.js: host a web server which handles all requests to administrate the piopener project
+- MySQL: store the open and close history of the garage door, all of the users, and all of the users' settings
