@@ -37,14 +37,14 @@ export function checkStatus() {
 
         // If it's been too long since the garage was last seen closed, send a notification
         if (getOpenTime() > constants.LONG_OPEN_DURATION)
-            return sendNotifications()
+            return sendLongOpenNotification()
     }, 20000)
 }
 
 /**
- * Send notifications to all users who have opted in to open notifications
+ * Send notifications to all users when the garage has been opened for a long time
  */
-async function sendNotifications() {
+async function sendLongOpenNotification() {
     // Wait a while between sending multiple notifications
     if (Date.now() - lastNotificationTime < constants.LONG_OPEN_DURATION * 2)
         return
@@ -58,26 +58,41 @@ async function sendNotifications() {
 
     // Send notifications to each device
     logger.printf("garage has been open for %d minutes", Math.floor((getOpenTime()) / 60000))
-    logger.printf("send notifications to [%s]", tokens.join(","))
+    logger.printf("send long open notifications to [%s]", tokens.join(","))
     for (const t of tokens)
-        sendNotification(t, minutesOpen)
+        sendNotification(t, `The garage door has been open for over ${minutesOpen} minutes!`)
 
     lastNotificationTime = Date.now()
 }
 
 /**
+ * Send notifications to all users when the garage was opened
+ */
+export async function sendOpenNotification(user) {
+    // Get the device tokens of all users who have opted in to open notifications
+    const tokens = await db.getNotificationTokens().catch(err => new Error(err))
+    if (tokens instanceof Error)
+        return logger.printf("could not get user device tokens: %s", tokens.toString())
+
+    // Send notifications to each device
+    logger.printf("send open notifications to [%s]", tokens.join(","))
+    for (const t of tokens)
+        sendNotification(t, `${user} has opened the garage.`)
+}
+
+/**
  * Send a notification to the specific device
  * @param {string} token The device token
- * @param {number} minutesOpen The amount of time the garage has been open
+ * @param {number} msg The notifcation body
  */
-function sendNotification(token, minutesOpen) {
+function sendNotification(token, msg) {
     var note = new apn.Notification()
 
     note.expiry = Math.floor(Date.now() / 1000) + 3600
     note.badge = 3
     note.sound = "ping.aiff"
     note.type = "alert"
-    note.alert = `The garage door has been open for over ${minutesOpen} minutes!`
+    note.alert = msg
     note.topic = "org.jlemon.garage.Garage-Door"
 
     notifications.send(note, token)

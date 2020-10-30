@@ -2,6 +2,7 @@ import mysql from 'mysql'
 import moment from 'moment-timezone'
 import * as config from './config.js'
 import * as constants from './constants.js'
+import * as settings from './settings.js'
 
 const pool = mysql.createPool({
     host: config.get("mysql.host"),
@@ -57,28 +58,22 @@ export function findUser(token) {
  */
 export function getAllSettings(token) {
     return new Promise((resolve, reject) => {
-        query("SELECT notify_on_long_open, open_upon_arrival FROM users WHERE token = ?", [token])
+        query("SELECT " + settings.ALL.map(s => s.Entries).flat().map(e => e.SettingKey).join(",") + " FROM users WHERE token = ?", [token])
             .then(rows => {
-                const settings = rows[0]
-                const openingSections = {
-                    Name: "Openings and closings",
-                    Entries: [
-                        {
-                            SettingName: "Notify on long open time", 
-                            SettingKey: "notify_on_long_open", 
-                            Description: "Send a notification when the door has been open for a long time", 
-                            Enabled: settings.notify_on_long_open === 1
-                        },
-                        {
-                            SettingName: "Open door upon arrival", 
-                            SettingKey: "open_upon_arrival", 
-                            Description: "Automatically open the door when you arrive at the apartment", 
-                            Enabled: settings.open_upon_arrival === 1
-                        }
-                    ]
+                const results = rows[0]
+
+                // Set each setting for the user in the respective sections
+                for (const settingName of Object.keys(results)) {
+                    const sectionIdx = settings.ALL.findIndex(s => s.Entries.find(e => e.SettingKey === settingName))
+                    if (sectionIdx === -1) continue;
+
+                    const entryIdx = settings.ALL[sectionIdx].Entries.findIndex(e => e.SettingKey === settingName)
+                    if (entryIdx === -1) continue;
+
+                    settings.ALL[sectionIdx].Entries[entryIdx]["Enabled"] = results[settingName] === 1
                 }
 
-                resolve([openingSections])
+                resolve(settings.ALL)
             })
             .catch(err => reject(err))
     })
