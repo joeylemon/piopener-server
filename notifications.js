@@ -77,7 +77,7 @@ export async function sendOpenNotification(user) {
     // Send notifications to each device
     logger.printf("send open notifications to [%s]", tokens.join(","))
     for (const t of tokens)
-        sendNotification(t, `${user} has opened the garage.`)
+        sendNotification(t, `${user} has opened the garage`)
 }
 
 /**
