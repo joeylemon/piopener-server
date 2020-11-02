@@ -50,7 +50,7 @@ async function sendLongOpenNotification() {
         return
 
     // Get the device tokens of all users who have opted in to open notifications
-    const tokens = await db.getNotificationTokens().catch(err => new Error(err))
+    const tokens = await db.getNotificationTokens(row => row.notify_on_long_open === 1).catch(err => new Error(err))
     if (tokens instanceof Error)
         return logger.printf("could not get user device tokens: %s", tokens.toString())
 
@@ -67,17 +67,20 @@ async function sendLongOpenNotification() {
 
 /**
  * Send notifications to all users when the garage was opened
+ * @param {Object} user The user object that opened the garage
  */
 export async function sendOpenNotification(user) {
     // Get the device tokens of all users who have opted in to open notifications
-    const tokens = await db.getNotificationTokens().catch(err => new Error(err))
+    const tokens = await db.getNotificationTokens(row => row.token !== user.token && row.notify_on_all_opens === 1).catch(err => new Error(err))
     if (tokens instanceof Error)
         return logger.printf("could not get user device tokens: %s", tokens.toString())
 
     // Send notifications to each device
     logger.printf("send open notifications to [%s]", tokens.join(","))
+    const msg = user.name === "Other" ? "Someone has just opened the garage" : `${user.name} has just opened the garage`
+
     for (const t of tokens)
-        sendNotification(t, `${user} has opened the garage`)
+        sendNotification(t, msg)
 }
 
 /**

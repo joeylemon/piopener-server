@@ -4,7 +4,6 @@ import * as constants from './constants.js'
 import * as utils from './utils.js'
 import * as config from './config.js'
 import * as logger from './logger.js'
-import * as notify from './notifications.js'
 
 /**
  * Middleware function for authorizing the request
@@ -59,9 +58,6 @@ export async function move(req, res) {
     utils.resetOpenTimer()
     logger.printf("moving garage for %s", res.locals.user.name)
     db.addHistory(res.locals.user, status)
-
-    if (status === "closed")
-        notify.sendOpenNotification(res.locals.user.name)
 
     res.status(200).send(status)
 }

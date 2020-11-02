@@ -3,6 +3,7 @@ import moment from 'moment-timezone'
 import * as config from './config.js'
 import * as constants from './constants.js'
 import * as settings from './settings.js'
+import * as notify from './notifications.js'
 
 const pool = mysql.createPool({
     host: config.get("mysql.host"),
@@ -113,6 +114,9 @@ export function updateSettings(token, setting, value) {
  * @param {String} status The status of the garage door ("open", "closed", or "between")
  */
 export function addHistory(user, status) {
+    if (status === "closed")
+        notify.sendOpenNotification(user)
+
     return query("INSERT INTO history (user_id,date,closed_status) VALUES (?, UNIX_TIMESTAMP(), ?)", [user.id, status === "closed" ? 1 : 0])
 }
 
@@ -191,6 +195,15 @@ export function getAllHistory() {
 /**
  * Get an array of iOS device tokens used to send remote notifications
  */
-export function getNotificationTokens() {
-    return query("SELECT u.device_token FROM users u WHERE u.notify_on_long_open = TRUE AND u.device_token IS NOT NULL", [], row => row.device_token)
+export function getNotificationTokens(filterFunc) {
+    return new Promise((resolve, reject) => {
+        query("SELECT * FROM users u WHERE u.device_token IS NOT NULL", [])
+            .then(rows => {
+                if (filterFunc)
+                    return resolve(rows.filter(filterFunc).map(r => r.device_token))
+
+                resolve(rows.map(r => r.device_token))
+            })
+            .catch(err => reject(err))
+    })
 }
