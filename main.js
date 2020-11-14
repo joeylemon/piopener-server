@@ -28,6 +28,9 @@ app.get('/history/add/:token/:status', routes.auth, routes.addHistory)
 // Endpoint for getting the status of the garage door (true if closed, false if open)
 app.get('/status/:token', routes.auth, routes.status)
 
+// Endpoint for updating the notification device token for the user
+app.get('/updatedevicetoken/:token/:devicetoken', routes.auth, routes.updateDeviceToken)
+
 // Endpoint for updating the ip of the Pi to the requester's ip
 app.get('/updateip/:token', routes.auth, routes.updateIP)
 

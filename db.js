@@ -99,13 +99,22 @@ export function getSetting(token, setting) {
 }
 
 /**
- * Get the user's settings
+ * Update the user's settings
  * @param {String} token The user's access token
  * @param {String} setting The setting name to update
  * @param {String} value The new value for the setting
  */
 export function updateSettings(token, setting, value) {
     return query(`UPDATE users SET ${setting} = ${value} WHERE token = ?`, [token])
+}
+
+/**
+ * Update the user's notification device token
+ * @param {String} token The user's access token
+ * @param {String} deviceToken The notification device token
+ */
+export function updateDeviceToken(token, deviceToken) {
+    return query(`UPDATE users SET device_token = ? WHERE token = ?`, [deviceToken, token])
 }
 
 /**
