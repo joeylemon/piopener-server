@@ -11,7 +11,12 @@ import * as logger from './logger.js'
 export async function auth(req, res, next) {
     const user = await db.findUser(req.params.token).catch(err => new Error(err))
     if (user instanceof Error) {
-        logger.printf("token %s was attempted to authorize but failed", req.params.token)
+        logger.printf("user with token %s was attempted to authorize but could not be found", req.params.token)
+        return res.status(401).send(constants.ERR_UNAUTHORIZED)
+    }
+
+    if (user.authorized !== 1) {
+        logger.printf("token %s attempted to authorize but does not have permission", req.params.token)
         return res.status(401).send(constants.ERR_UNAUTHORIZED)
     }
 

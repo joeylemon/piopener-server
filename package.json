@@ -3,7 +3,7 @@
         "dev": "node main.js",
         "start": "forever start --uid=piopener -o piopener.log -e piopener.log --append -w main.js",
         "stop": "forever stop piopener",
-        "log": "tail -fn 500 /home/dustin/.forever/piopener.log"
+        "log": "tail -fn 500 piopener.log"
     },
     "type": "module",
     "dependencies": {
