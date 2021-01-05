@@ -11,7 +11,7 @@ export async function allHistory() {
     const actions = await db.getAllHistory().catch(err => new Error(err))
     if (actions instanceof Error) {
         logger.printf("could not get history: %s", actions.toString())
-        throw new Error(actions.toString())
+        throw actions
     }
 
     return actions
@@ -25,7 +25,7 @@ export async function getHistoryPage(page) {
     const actions = await db.getHistory(page).catch(err => new Error(err))
     if (actions instanceof Error) {
         logger.printf("could not get history: %s", actions.toString())
-        throw new Error(actions.toString())
+        throw actions
     }
 
     logger.printf("retrieving page %d of history", page)
@@ -47,6 +47,6 @@ export async function addHistory(user, status) {
     const result = db.addHistory(user, status)
     if (result instanceof Error) {
         logger.printf("could not add history: %s", result.toString())
-        throw new Error(result.toString())
+        throw result
     }
 }

@@ -11,7 +11,7 @@ export async function updateDeviceToken(token, deviceToken) {
 
     if (results instanceof Error) {
         logger.printf("could not update device token: %s", results.toString())
-        throw new Error(results.toString())
+        throw results
     }
 
     logger.printf("updating device token for %s to %s", token, deviceToken)

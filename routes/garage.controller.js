@@ -4,6 +4,15 @@ import * as garageService from './garage.service.js'
 
 const router = express.Router()
 
+router.get('/sendopenalert/:time/:token', utils.auth, async (req, res) => {
+    try {
+        await garageService.sendLongOpenAlert(req.params.time)
+        res.status(200).send("200 OK")
+    } catch (err) {
+        res.status(500).send(err.toString())
+    }
+})
+
 router.get('/status/:token', utils.auth, async (req, res) => {
     try {
         const status = await garageService.status(res.locals.user)

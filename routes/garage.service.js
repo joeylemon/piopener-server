@@ -3,6 +3,21 @@ import * as utils from '../utils.js'
 import * as logger from '../logger.js'
 import * as constants from '../constants.js'
 import * as garage from '../garage.js'
+import * as notifications from '../notifications.js'
+
+/**
+ * Endpoint for sending an alert when the garage has been open for a long time
+ * https://jlemon.org/garage/sendopenalert
+ */
+export async function sendLongOpenAlert(openTime) {
+    const status = await notifications.sendLongOpenNotification(openTime).catch(err => new Error(err))
+    if (status instanceof Error) {
+        logger.printf("could not send open alert: %s", status.toString())
+        throw status
+    }
+
+    logger.printf("sending long open notification")
+}
 
 /**
  * Endpoint for getting the closed status of the garage door (true if closed, false if open)

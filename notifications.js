@@ -11,58 +11,24 @@ const notifications = new apn.Provider({
     production: false
 })
 
-let lastNotificationTime = 0
-let lastClosedTime = Date.now()
-
-/**
- * Get the duration (in ms) that the garage door has been open
- */
-function getOpenTime() {
-    return Date.now() - lastClosedTime
-}
-
-/**
- * Start a timer that tracks the garage's open status
- */
-export function checkStatus() {
-    setInterval(async () => {
-        const status = await garage.getStatus().catch(err => new Error(err))
-        if (status instanceof Error)
-            return logger.printf("could not get garage status: %s", status.toString())
-
-        if (status === "closed") {
-            lastClosedTime = Date.now()
-            return
-        }
-
-        // If it's been too long since the garage was last seen closed, send a notification
-        if (getOpenTime() > constants.LONG_OPEN_DURATION)
-            return sendLongOpenNotification()
-    }, 20000)
-}
-
 /**
  * Send notifications to all users when the garage has been opened for a long time
  */
-async function sendLongOpenNotification() {
-    // Wait a while between sending multiple notifications
-    if (Date.now() - lastNotificationTime < constants.LONG_OPEN_DURATION * 2)
-        return
-
+export async function sendLongOpenNotification(openTime) {
     // Get the device tokens of all users who have opted in to open notifications
     const tokens = await db.getNotificationTokens(row => row.notify_on_long_open === 1).catch(err => new Error(err))
-    if (tokens instanceof Error)
-        return logger.printf("could not get user device tokens: %s", tokens.toString())
+    if (tokens instanceof Error) {
+        logger.printf("could not get user device tokens: %s", tokens.toString())
+        throw tokens
+    }
 
-    const minutesOpen = Math.floor(getOpenTime() / 60000)
+    const minutesOpen = Math.floor(openTime / 60000)
 
     // Send notifications to each device
-    logger.printf("garage has been open for %d minutes", Math.floor((getOpenTime()) / 60000))
+    logger.printf("garage has been open for %d minutes", minutesOpen)
     logger.printf("send long open notifications to [%s]", tokens.join(","))
     for (const t of tokens)
         sendNotification(t, `The garage door has been open for over ${minutesOpen} minutes!`)
-
-    lastNotificationTime = Date.now()
 }
 
 /**
