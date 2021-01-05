@@ -1,6 +1,4 @@
-import * as constants from './constants.js'
 import * as db from './db.js'
-import * as garage from './garage.js'
 import * as logger from './logger.js'
 import * as config from './config.js'
 import apn from 'apn'

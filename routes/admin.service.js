@@ -13,8 +13,6 @@ export async function updateDeviceToken(token, deviceToken) {
         logger.printf("could not update device token: %s", results.toString())
         throw results
     }
-
-    logger.printf("updating device token for %s to %s", token, deviceToken)
 }
 
 /**
@@ -22,6 +20,5 @@ export async function updateDeviceToken(token, deviceToken) {
  * https://jlemon.org/garage/updateip
  */
 export async function updateIP(ip) {
-    logger.printf("updating pi ip to %s", ip)
     config.set("pi.ip", ip)
 }

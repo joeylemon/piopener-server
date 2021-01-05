@@ -28,7 +28,6 @@ export async function getHistoryPage(page) {
         throw actions
     }
 
-    logger.printf("retrieving page %d of history", page)
     return actions
 }
 
@@ -41,8 +40,6 @@ export async function addHistory(user, status) {
         logger.printf("request to manually add history failed: a move request was sent within the last %d seconds", constants.OPEN_DELAY)
         throw new Error(constants.ERR_EXCESSIVE_REQUESTS)
     }
-
-    logger.printf("adding history for %s", user.name)
 
     const result = db.addHistory(user, status)
     if (result instanceof Error) {

@@ -2,7 +2,7 @@ import mysql from 'mysql'
 import moment from 'moment-timezone'
 import * as config from './config.js'
 import * as constants from './constants.js'
-import * as settings from './settings.js'
+import * as settings from './routes/settings.service.js'
 import * as notify from './notifications.js'
 
 const pool = mysql.createPool({
