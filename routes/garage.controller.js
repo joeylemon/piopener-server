@@ -4,7 +4,22 @@ import * as garageService from './garage.service.js'
 
 const router = express.Router()
 
-router.get('/status/:token', utils.auth, garageService.status)
-router.get('/:mode/:token', utils.auth, garageService.move)
+router.get('/status/:token', utils.auth, async (req, res) => {
+    try {
+        const status = await garageService.status(res.locals.user)
+        res.status(200).send(status)
+    } catch (err) {
+        res.status(500).send(err.toString())
+    }
+})
+
+router.get('/:mode/:token', utils.auth, async (req, res) => {
+    try {
+        const status = await garageService.move(res.locals.user, req.params.mode)
+        res.status(200).send(status)
+    } catch (err) {
+        res.status(500).send(err.toString())
+    }
+})
 
 export default router

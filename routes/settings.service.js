@@ -5,43 +5,42 @@ import * as logger from '../logger.js'
  * Endpoint for getting a user's settings
  * https://jlemon.org/garage/settings
  */
-export async function getAllSettings(req, res) {
-    const settings = await db.getAllSettings(req.params.token).catch(err => new Error(err))
+export async function getAllSettings(user, token) {
+    const settings = await db.getAllSettings(token).catch(err => new Error(err))
     if (settings instanceof Error) {
         logger.printf("could not get settings: %s", settings.toString())
-        return res.status(500).send(settings.toString())
+        throw new Error(settings.toString())
     }
 
-    logger.printf("retrieving settings for %s", res.locals.user.name)
-    res.status(200).send(settings)
+    logger.printf("retrieving settings for %s", user.name)
+    return settings
 }
 
 /**
  * Endpoint for getting a user's specific settings
  * https://jlemon.org/garage/settings
  */
-export async function getSetting(req, res) {
-    const setting = await db.getSetting(req.params.token, req.params.setting).catch(err => new Error(err))
-    if (setting instanceof Error) {
-        logger.printf("could not get setting: %s", setting.toString())
-        return res.status(500).send(setting.toString())
+export async function getSetting(token, setting) {
+    const settingResult = await db.getSetting(token, setting).catch(err => new Error(err))
+    if (settingResult instanceof Error) {
+        logger.printf("could not get setting: %s", settingResult.toString())
+        throw new Error(settingResult.toString())
     }
 
-    logger.printf("retrieving setting %s for %s", req.params.setting, res.locals.user.name)
-    res.status(200).send(setting === 1)
+    logger.printf("retrieving setting %s for %s", setting, token)
+    return settingResult === 1
 }
 
 /**
  * Endpoint for updating a user's settings
  * https://jlemon.org/garage/settings
  */
-export async function setSettings(req, res) {
-    const results = await db.updateSettings(req.params.token, req.params.setting, req.params.value).catch(err => new Error(err))
+export async function updateSetting(token, setting, value) {
+    const results = await db.updateSettings(token, setting, value).catch(err => new Error(err))
     if (results instanceof Error) {
         logger.printf("could not update settings: %s", results.toString())
-        return res.status(500).send(results.toString())
+        throw new Error(results.toString())
     }
 
-    logger.printf("updating setting %s to %s for %s", req.params.setting, req.params.value, res.locals.user.name)
-    res.status(200).send("200 OK")
+    logger.printf("updating setting %s to %s for %s", setting, value, token)
 }
