@@ -10,7 +10,7 @@ export async function updateDeviceToken(token, deviceToken) {
     const results = await db.updateDeviceToken(token, deviceToken).catch(err => new Error(err))
 
     if (results instanceof Error) {
-        logger.printf("could not update device token: %s", results.toString())
+        logger.print(`could not update device token: ${results.toString()}`)
         throw results
     }
 }

@@ -10,7 +10,7 @@ import * as constants from '../constants.js'
 export async function allHistory() {
     const actions = await db.getAllHistory().catch(err => new Error(err))
     if (actions instanceof Error) {
-        logger.printf("could not get history: %s", actions.toString())
+        logger.print(`could not get history: ${actions.toString()}`)
         throw actions
     }
 
@@ -24,7 +24,7 @@ export async function allHistory() {
 export async function getHistoryPage(page) {
     const actions = await db.getHistory(page).catch(err => new Error(err))
     if (actions instanceof Error) {
-        logger.printf("could not get history: %s", actions.toString())
+        logger.print(`could not get history: ${actions.toString()}`)
         throw actions
     }
 
@@ -37,13 +37,13 @@ export async function getHistoryPage(page) {
  */
 export async function addHistory(user, status) {
     if (!utils.canOpen()) {
-        logger.printf("request to manually add history failed: a move request was sent within the last %d seconds", constants.OPEN_DELAY)
+        logger.print(`request to manually add history failed: a move request was sent within the last ${constants.OPEN_DELAY} seconds`)
         throw new Error(constants.ERR_EXCESSIVE_REQUESTS)
     }
 
     const result = db.addHistory(user, status)
     if (result instanceof Error) {
-        logger.printf("could not add history: %s", result.toString())
+        logger.print(`could not add history: ${result.toString()}`)
         throw result
     }
 }

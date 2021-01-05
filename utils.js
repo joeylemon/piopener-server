@@ -10,16 +10,16 @@ let lastOpen = 0
 export async function auth(req, res, next) {
     const user = await db.findUser(req.params.token).catch(err => new Error(err))
     if (user instanceof Error) {
-        logger.printf("user with token %s was attempted to authorize but could not be found", req.params.token)
+        (`user with token ${req.params.token} was attempted to authorize but could not be found`)
         return res.status(401).send(constants.ERR_UNAUTHORIZED)
     }
 
     if (user.active !== 1) {
-        logger.printf("user %s attempted to authorize but is not active", user.name)
+        logger.print(`user ${user.name} attempted to authorize but is not active`)
         return res.status(401).send(constants.ERR_UNAUTHORIZED)
     }
 
-    logger.printf("authorized token %s to user %s", req.params.token, user.name)
+    logger.print(`authorized token ${req.params.token} to user ${user.name}`)
     res.locals.user = user
     next()
 }

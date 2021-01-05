@@ -31,7 +31,7 @@ export const ALL = [OPEN_AND_CLOSE]
 export async function getAllSettings(token) {
     const settings = await db.getAllSettings(token).catch(err => new Error(err))
     if (settings instanceof Error) {
-        logger.printf("could not get settings: %s", settings.toString())
+        logger.print(`could not get settings: ${settings.toString()}`)
         throw settings
     }
 
@@ -45,7 +45,7 @@ export async function getAllSettings(token) {
 export async function getSetting(token, setting) {
     const settingResult = await db.getSetting(token, setting).catch(err => new Error(err))
     if (settingResult instanceof Error) {
-        logger.printf("could not get setting %s: %s", setting, settingResult.toString())
+        logger.print(`could not get setting ${setting}: ${settingResult.toString()}`)
         throw settingResult
     }
 
@@ -59,7 +59,7 @@ export async function getSetting(token, setting) {
 export async function updateSetting(token, setting, value) {
     const results = await db.updateSettings(token, setting, value).catch(err => new Error(err))
     if (results instanceof Error) {
-        logger.printf("could not update setting %s: %s", setting, results.toString())
+        logger.print(`could not update setting ${setting}: ${results.toString()}`)
         throw results
     }
 }

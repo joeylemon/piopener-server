@@ -47,7 +47,7 @@ export function getStatus() {
 export async function sendLongOpenAlert(openTime) {
     const status = await notifications.sendLongOpenNotification(openTime).catch(err => new Error(err))
     if (status instanceof Error) {
-        logger.printf("could not send open alert: %s", status.toString())
+        logger.print(`could not send open alert: ${status.toString()}`)
         throw status
     }
 }
@@ -59,7 +59,7 @@ export async function sendLongOpenAlert(openTime) {
 export async function status() {
     const status = await getStatus().catch(err => new Error(err))
     if (status instanceof Error) {
-        logger.printf("could not get garage status: %s", status.toString())
+        logger.print(`could not get garage status: ${status.toString()}`)
         throw new Error(constants.ERR_BAD_SENSOR)
     }
 
@@ -73,36 +73,36 @@ export async function status() {
 export async function move(user, mode) {
     // Don't allow too many open requests to be sent at one time
     if (!utils.canOpen()) {
-        logger.printf(`request to move garage failed: another request was sent within the last %d seconds`, constants.OPEN_DELAY)
+        logger.print(`request to move garage failed: another request was sent within the last ${constants.OPEN_DELAY} seconds`)
         throw new Error(constants.ERR_EXCESSIVE_REQUESTS)
     }
 
     // Ensure a correct mode is given
     if (mode !== "open" && mode !== "move") {
-        logger.printf("move route was requested with invalid mode %s", mode)
+        logger.print(`move route was requested with invalid mode ${mode}`)
         throw new Error(constants.ERR_INVALID_MODE)
     }
 
     const status = await getStatus().catch(err => new Error(err))
     if (status instanceof Error) {
-        logger.printf("could not get garage status: %s", status.toString())
+        logger.print(`could not get garage status: ${status.toString()}`)
         throw new Error(constants.ERR_BAD_SENSOR)
     }
 
     // If the garage is already open and mode is open-only, do nothing
     if (mode === "open" && status !== "closed") {
-        logger.printf("request was sent to open garage but status was %s", status)
+        logger.print(`request was sent to open garage but status was ${status}`)
         throw new Error(constants.ERR_ALREADY_OPEN)
     }
 
     const result = await sendMoveRequest().catch(err => new Error(err))
     if (result instanceof Error) {
-        logger.printf("could not move garage: %s", result.toString())
+        logger.print(`could not move garage: ${result.toString()}`)
         throw new Error(constants.ERR_MOVE_ERROR)
     }
 
     utils.resetOpenTimer()
-    logger.printf("moving garage for %s", user.name)
+    logger.print(`moving garage for ${user.name}`)
     db.addHistory(user, status)
 
     return status

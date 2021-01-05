@@ -16,15 +16,15 @@ export async function sendLongOpenNotification(openTime) {
     // Get the device tokens of all users who have opted in to open notifications
     const tokens = await db.getNotificationTokens(row => row.notify_on_long_open === 1).catch(err => new Error(err))
     if (tokens instanceof Error) {
-        logger.printf("could not get user device tokens: %s", tokens.toString())
+        logger.print(`could not get user device tokens: ${tokens.toString()}`)
         throw tokens
     }
 
     const minutesOpen = Math.floor(openTime / 60000)
 
     // Send notifications to each device
-    logger.printf("garage has been open for %d minutes", minutesOpen)
-    logger.printf("send long open notifications to [%s]", tokens.join(","))
+    logger.print(`garage has been open for ${minutesOpen} minutes`)
+    logger.print(`send long open notifications to [${tokens.join(",")}]`)
     for (const t of tokens)
         sendNotification(t, `The garage door has been open for over ${minutesOpen} minutes!`)
 }
@@ -37,10 +37,10 @@ export async function sendOpenNotification(user) {
     // Get the device tokens of all users who have opted in to open notifications
     const tokens = await db.getNotificationTokens(row => row.token !== user.token && row.notify_on_all_opens === 1).catch(err => new Error(err))
     if (tokens instanceof Error)
-        return logger.printf("could not get user device tokens: %s", tokens.toString())
+        return logger.print(`could not get user device tokens: ${tokens.toString()}`)
 
     // Send notifications to each device
-    logger.printf("send open notifications to [%s]", tokens.join(","))
+    logger.print(`send open notifications to ${tokens.join(",")}`)
     const msg = user.name === "Other" ? "Someone has just opened the garage" : `${user.name} has just opened the garage`
 
     for (const t of tokens)
@@ -63,5 +63,5 @@ function sendNotification(token, msg) {
     note.topic = "org.jlemon.garage.Garage-Door"
 
     notifications.send(note, token)
-        .catch(err => logger.printf("could not send notification to %s: %s", token, err.toString()))
+        .catch(err => logger.print(`could not send notification to ${token}: ${err.toString()}`))
 }
