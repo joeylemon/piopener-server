@@ -59,17 +59,17 @@ export function findUser(token) {
  */
 export function getAllSettings(token) {
     return new Promise((resolve, reject) => {
-        query("SELECT " + settings.ALL.map(s => s.Entries).flat().map(e => e.SettingKey).join(",") + " FROM users WHERE token = ?", [token])
+        query("SELECT " + settings.getAllSettingKeys().join(",") + " FROM users WHERE token = ?", [token])
             .then(rows => {
                 const results = rows[0]
 
                 // Set each setting for the user in the respective sections
                 for (const settingName of Object.keys(results)) {
                     const sectionIdx = settings.ALL.findIndex(s => s.Entries.find(e => e.SettingKey === settingName))
-                    if (sectionIdx === -1) continue;
+                    if (sectionIdx === -1) continue
 
                     const entryIdx = settings.ALL[sectionIdx].Entries.findIndex(e => e.SettingKey === settingName)
-                    if (entryIdx === -1) continue;
+                    if (entryIdx === -1) continue
 
                     settings.ALL[sectionIdx].Entries[entryIdx]["Enabled"] = results[settingName] === 1
                 }
@@ -86,7 +86,7 @@ export function getAllSettings(token) {
  */
 export function getSetting(token, setting) {
     return new Promise((resolve, reject) => {
-        query("SELECT notify_on_long_open, open_upon_arrival FROM users WHERE token = ?", [token])
+        query("SELECT " + settings.getAllSettingKeys().join(",") + " FROM users WHERE token = ?", [token])
             .then(rows => {
                 const settings = rows[0]
                 if (settings[setting] === undefined)
