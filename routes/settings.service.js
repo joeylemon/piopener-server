@@ -22,7 +22,18 @@ export const OPEN_AND_CLOSE = {
     ]
 }
 
-export const ALL = [OPEN_AND_CLOSE]
+export const TRAVEL_HISTORY = {
+    Name: "Location tracking",
+    Entries: [
+        {
+            SettingName: "Record location history",
+            SettingKey: "record_location_history",
+            Description: "This is for personal enjoyment for heatmaps of my travel history. Leave this unchecked."
+        }
+    ]
+}
+
+export const ALL = [OPEN_AND_CLOSE, TRAVEL_HISTORY]
 
 /**
  * Get a list of all setting column names for the user table
