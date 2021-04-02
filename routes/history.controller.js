@@ -30,7 +30,7 @@ router.get('/add/:token/:status', utils.auth, async (req, res) => {
     try {
         logger.print(`adding history for ${res.locals.user.name}`)
         await historyService.addHistory(res.locals.user, req.params.status)
-        res.status(200).send("200 OK")
+        res.status(200).send('200 OK')
     } catch (err) {
         logger.print(`could not add history for ${res.locals.user.name}: ${err}`)
         res.status(500).send(err.toString())

@@ -1,9 +1,10 @@
 {
     "scripts": {
         "dev": "node main.js",
-        "start": "forever start --uid=piopener -o piopener.log -e piopener.log --append -w main.js",
+        "start": "forever start --uid=piopener -o piopener.log -e piopener.log --append main.js",
         "stop": "forever stop piopener",
-        "log": "tail -fn 500 piopener.log"
+        "log": "tail -fn 500 piopener.log",
+        "lint": "./node_modules/.bin/eslint . --ext .js,.ts --fix"
     },
     "type": "module",
     "dependencies": {
@@ -11,6 +12,14 @@
         "express": "^4.17.1",
         "moment-timezone": "^0.5.31",
         "mysql": "^2.18.1",
-        "request": "^2.88.2"
+        "socket.io": "^3.1.2"
+    },
+    "devDependencies": {
+        "eslint": "^7.23.0",
+        "eslint-config-standard": "^16.0.2",
+        "eslint-plugin-import": "^2.22.1",
+        "eslint-plugin-node": "^11.1.0",
+        "eslint-plugin-promise": "^4.3.1",
+        "eslint-plugin-standard": "^5.0.0"
     }
 }

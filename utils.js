@@ -7,7 +7,7 @@ let lastOpen = 0
 /**
  * Middleware function for authorizing the request
  */
-export async function auth(req, res, next) {
+export async function auth (req, res, next) {
     const user = await db.findUser(req.params.token).catch(err => new Error(err))
     if (user instanceof Error) {
         logger.print(`user with token ${req.params.token} was attempted to authorize but could not be found`)
@@ -27,14 +27,14 @@ export async function auth(req, res, next) {
 /**
  * Only allow one request to the garage over a specified time
  */
-export function canOpen() {
+export function canOpen () {
     return Date.now() - lastOpen >= constants.OPEN_DELAY * 1000
 }
 
 /**
  * Reset the timer when a user opens the garage
  */
-export function resetOpenTimer() {
+export function resetOpenTimer () {
     lastOpen = Date.now()
 }
 
@@ -43,7 +43,7 @@ export function resetOpenTimer() {
  * @param req The request object
  * @return The ip address string
  */
-export function getRequestIP(req) {
+export function getRequestIP (req) {
     return (req.headers['x-forwarded-for'] || '').split(',').pop().trim() ||
         req.connection.remoteAddress ||
         req.socket.remoteAddress ||

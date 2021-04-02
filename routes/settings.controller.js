@@ -29,7 +29,7 @@ router.get('/set/:token/:setting/:value', utils.auth, async (req, res) => {
     try {
         logger.print(`updating setting ${req.params.setting} to ${req.params.value} for ${res.locals.user.name}`)
         await settingService.updateSetting(req.params.token, req.params.setting, req.params.value)
-        res.status(200).send("200 OK")
+        res.status(200).send('200 OK')
     } catch (err) {
         res.status(500).send(err.toString())
     }

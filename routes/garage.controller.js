@@ -7,9 +7,9 @@ const router = express.Router()
 
 router.get('/sendopenalert/:time/:token', utils.auth, async (req, res) => {
     try {
-        logger.print("sending long open notification")
+        logger.print('sending long open notification')
         await garageService.sendLongOpenAlert(req.params.time)
-        res.status(200).send("200 OK")
+        res.status(200).send('200 OK')
     } catch (err) {
         res.status(500).send(err.toString())
     }

@@ -7,7 +7,7 @@ import * as constants from '../constants.js'
  * Endpoint for getting all of the open/close history
  * https://jlemon.org/garage/history/all
  */
-export async function allHistory() {
+export async function allHistory () {
     const actions = await db.getAllHistory().catch(err => new Error(err))
     if (actions instanceof Error) {
         logger.print(`could not get history: ${actions.toString()}`)
@@ -21,7 +21,7 @@ export async function allHistory() {
  * Endpoint for getting a page of the open/close history
  * https://jlemon.org/garage/history
  */
-export async function getHistoryPage(page) {
+export async function getHistoryPage (page) {
     const actions = await db.getHistory(page).catch(err => new Error(err))
     if (actions instanceof Error) {
         logger.print(`could not get history: ${actions.toString()}`)
@@ -35,7 +35,7 @@ export async function getHistoryPage(page) {
  * Endpoint for manually adding history
  * https://jlemon.org/garage/history/add
  */
-export async function addHistory(user, status) {
+export async function addHistory (user, status) {
     if (!utils.canOpen()) {
         logger.print(`request to manually add history failed: a move request was sent within the last ${constants.OPEN_DELAY} seconds`)
         throw new Error(constants.ERR_EXCESSIVE_REQUESTS)
