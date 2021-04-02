@@ -2,7 +2,7 @@ import mysql from 'mysql'
 import moment from 'moment-timezone'
 import * as config from './config.js'
 import * as constants from './constants.js'
-import * as settings from './routes/settings.service.js'
+import * as settings from '../routes/settings/settings.service.js'
 import * as notify from './notifications.js'
 
 const pool = mysql.createPool({
@@ -41,7 +41,7 @@ export function findUser (token) {
     return new Promise((resolve, reject) => {
         query('SELECT * FROM users where token = ?', [token])
             .then(rows => {
-                if (rows.length > 0) { resolve(rows[0]) } else { reject(new Error("Couldn't find user")) }
+                if (rows.length > 0) { return resolve(rows[0]) } else { return reject(new Error("Couldn't find user")) }
             })
             .catch(err => reject(err))
     })
@@ -68,7 +68,7 @@ export function getAllSettings (token) {
                     settings.ALL[sectionIdx].Entries[entryIdx].Enabled = results[settingName] === 1
                 }
 
-                resolve(settings.ALL)
+                return resolve(settings.ALL)
             })
             .catch(err => reject(err))
     })
@@ -83,9 +83,9 @@ export function getSetting (token, setting) {
         query('SELECT ' + settings.getAllSettingKeys().join(',') + ' FROM users WHERE token = ?', [token])
             .then(rows => {
                 const settings = rows[0]
-                if (settings[setting] === undefined) { reject(new Error('Setting does not exist')) }
+                if (settings[setting] === undefined) { return reject(new Error('Setting does not exist')) }
 
-                resolve(settings[setting])
+                return resolve(settings[setting])
             })
             .catch(err => reject(err))
     })
@@ -159,7 +159,7 @@ export function getHistory (page) {
                 }
 
                 // Organize dict into single array
-                resolve(Object.keys(sections).map(t => {
+                return resolve(Object.keys(sections).map(t => {
                     return {
                         Title: t,
                         Entries: sections[t]
@@ -201,7 +201,7 @@ export function getNotificationTokens (filterFunc) {
             .then(rows => {
                 if (filterFunc) { return resolve(rows.filter(filterFunc).map(r => r.device_token)) }
 
-                resolve(rows.map(r => r.device_token))
+                return resolve(rows.map(r => r.device_token))
             })
             .catch(err => reject(err))
     })

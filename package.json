@@ -1,7 +1,8 @@
 {
+    "main": "src/index.js",
     "scripts": {
-        "dev": "node main.js",
-        "start": "forever start --uid=piopener --append main.js",
+        "dev": "node src/index.js",
+        "start": "forever start --uid=piopener --append src/index.js",
         "stop": "forever stop piopener",
         "log": "tail -fn 500 /home/joey/.forever/piopener.log",
         "lint": "./node_modules/.bin/eslint . --ext .js,.ts --fix"

@@ -1,9 +1,9 @@
-import * as db from '../db.js'
-import * as utils from '../utils.js'
-import * as logger from '../logger.js'
-import * as sockets from '../sockets.js'
-import * as constants from '../constants.js'
-import * as notifications from '../notifications.js'
+import * as db from '../../utils/db.js'
+import * as utils from '../../utils/utils.js'
+import * as logger from '../../utils/logger.js'
+import * as sockets from '../../utils/sockets.js'
+import * as constants from '../../utils/constants.js'
+import * as notifications from '../../utils/notifications.js'
 
 /**
  * Send a request to the Pi to open the garage

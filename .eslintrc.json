@@ -5,7 +5,9 @@
         "mocha": true
     },
     "extends": [
-        "standard"
+        "standard",
+        "plugin:promise/recommended",
+        "plugin:import/recommended"
     ],
     "parserOptions": {
         "ecmaVersion": 12,

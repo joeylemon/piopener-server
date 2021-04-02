@@ -1,6 +1,6 @@
 import express from 'express'
-import * as logger from '../logger.js'
-import * as utils from '../utils.js'
+import * as logger from '../../utils/logger.js'
+import * as utils from '../../utils/utils.js'
 import * as garageService from './garage.service.js'
 
 const router = express.Router()

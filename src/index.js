@@ -1,10 +1,10 @@
 import express from 'express'
 
-import * as sockets from './sockets.js'
-import settings from './routes/settings.controller.js'
-import history from './routes/history.controller.js'
-import admin from './routes/admin.controller.js'
-import garage from './routes/garage.controller.js'
+import * as sockets from './utils/sockets.js'
+import settings from './routes/settings/settings.controller.js'
+import history from './routes/history/history.controller.js'
+import admin from './routes/admin/admin.controller.js'
+import garage from './routes/garage/garage.controller.js'
 
 const app = express()
 

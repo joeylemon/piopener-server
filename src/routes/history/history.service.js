@@ -1,7 +1,7 @@
-import * as db from '../db.js'
-import * as utils from '../utils.js'
-import * as logger from '../logger.js'
-import * as constants from '../constants.js'
+import * as db from '../../utils/db.js'
+import * as utils from '../../utils/utils.js'
+import * as logger from '../../utils/logger.js'
+import * as constants from '../../utils/constants.js'
 
 /**
  * Endpoint for getting all of the open/close history

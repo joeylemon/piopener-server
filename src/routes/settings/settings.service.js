@@ -1,5 +1,5 @@
-import * as db from '../db.js'
-import * as logger from '../logger.js'
+import * as db from '../../utils/db.js'
+import * as logger from '../../utils/logger.js'
 
 export const OPEN_AND_CLOSE = {
     Name: 'Openings and closings',

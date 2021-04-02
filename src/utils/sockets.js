@@ -40,6 +40,8 @@ export function init (httpServer) {
 
 export function sendMoveRequest () {
     return new Promise((resolve, reject) => {
+        if (!clientSocket) return reject(new Error('No connection with client'))
+
         clientSocket.emit('move', resp => {
             if (typeof resp === 'string' && resp.toLowerCase().startsWith('error')) { return reject(resp) }
 
@@ -50,6 +52,8 @@ export function sendMoveRequest () {
 
 export function getStatus () {
     return new Promise((resolve, reject) => {
+        if (!clientSocket) return reject(new Error('No connection with client'))
+
         clientSocket.emit('get status', resp => {
             if (typeof resp === 'string' && resp.toLowerCase().startsWith('error')) { return reject(resp) }
 

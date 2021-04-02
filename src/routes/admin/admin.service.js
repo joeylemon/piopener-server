@@ -1,5 +1,5 @@
-import * as db from '../db.js'
-import * as logger from '../logger.js'
+import * as db from '../../utils/db.js'
+import * as logger from '../../utils/logger.js'
 
 /**
  * Endpoint for updating the notification device token for the user
