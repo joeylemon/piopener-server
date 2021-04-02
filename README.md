@@ -14,7 +14,7 @@ We soldered two wires from the Raspberry Pi to the circuit board inside of one o
 
 ### What is piopener-server?
 
-This repository is the code that lives on a dedicated server which serves as the backend to the piopener project. It includes every endpoint required to operate the piopener project, including opening and closing, checking status, checking history, changing user settings, etc. In order to actually open the garage, this server can send a request to the [Raspberry Pi](https://github.com/joeylemon/piopener-pi)'s ip address. The [iOS application](https://github.com/joeylemon/piopener-app) serves as the main interface to this server.
+This repository is the code that lives on a dedicated server which serves as the backend to the piopener project. It includes every endpoint required to operate the piopener project, including opening and closing, checking status, checking history, changing user settings, etc. In order to actually open the garage, this server can send a request to the [Raspberry Pi](https://github.com/joeylemon/piopener-pi) via a websocket connection. The [iOS application](https://github.com/joeylemon/piopener-app) serves as the main interface to this server.
 
 #### Technologies:
 - Node.js: host a web server which handles all requests to administrate the piopener project
