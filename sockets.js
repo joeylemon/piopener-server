@@ -43,7 +43,7 @@ export function sendMoveRequest () {
         clientSocket.emit('move', resp => {
             if (typeof resp === 'string' && resp.toLowerCase().startsWith('error')) { return reject(resp) }
 
-            resolve()
+            resolve(resp)
         })
     })
 }

@@ -1,9 +1,9 @@
 {
     "scripts": {
         "dev": "node main.js",
-        "start": "forever start --uid=piopener -o piopener.log -e piopener.log --append main.js",
+        "start": "forever start --uid=piopener --append main.js",
         "stop": "forever stop piopener",
-        "log": "tail -fn 500 piopener.log",
+        "log": "tail -fn 500 /home/joey/.forever/piopener.log",
         "lint": "./node_modules/.bin/eslint . --ext .js,.ts --fix"
     },
     "type": "module",
