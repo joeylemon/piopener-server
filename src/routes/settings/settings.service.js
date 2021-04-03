@@ -26,9 +26,14 @@ export const TRAVEL_HISTORY = {
     Name: 'Location tracking',
     Entries: [
         {
+            SettingName: 'Notify when leaving apartment',
+            SettingKey: 'notify_on_exit_region',
+            Description: 'Send a notification when you leave the apartment'
+        },
+        {
             SettingName: 'Record location history',
             SettingKey: 'record_location_history',
-            Description: 'This is for personal enjoyment for heatmaps of my travel history. Leave this unchecked.'
+            Description: 'This is for personal enjoyment for heatmaps of my travel history. Leave this unchecked'
         }
     ]
 }
