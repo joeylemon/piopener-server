@@ -1,5 +1,7 @@
 # piopener-server
 
+![Node.js Tests](https://github.com/joeylemon/piopener-server/workflows/Node.js%20Tests/badge.svg)
+
 ### What is it?
 
 Our project, titled piopener, is the infrastructure designed to allow us to communicate with our garage door via our API and perform actions upon it. These actions can be opening, closing, checking history, checking current open status, etc.
