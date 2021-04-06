@@ -32,4 +32,5 @@ jobs:
     - name: Run tests
       run: npm test
       env:
+        TESTING: true
         OTHER_TOKEN: ${{ secrets.OTHER_TOKEN }}

@@ -7,7 +7,7 @@ import apn from 'apn'
 let notifications
 
 // Don't set up APN configuration if testing
-if (!process.env.OTHER_TOKEN) {
+if (!process.env.TESTING) {
     notifications = new apn.Provider({
         token: config.get('apn'),
         production: false
