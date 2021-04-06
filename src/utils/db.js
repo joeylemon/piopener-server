@@ -5,12 +5,17 @@ import * as constants from './constants.js'
 import * as settings from '../routes/settings/settings.service.js'
 import * as notify from './notifications.js'
 
-const pool = mysql.createPool({
-    host: config.get('mysql.host'),
-    user: config.get('mysql.user'),
-    password: config.get('mysql.pass'),
-    database: config.get('mysql.db')
-})
+let pool
+
+// Don't set up mysql if testing
+if (!process.env.TESTING) {
+    pool = mysql.createPool({
+        host: config.get('mysql.host'),
+        user: config.get('mysql.user'),
+        password: config.get('mysql.pass'),
+        database: config.get('mysql.db')
+    })
+}
 
 /**
  * Perform a query on the database
