@@ -31,3 +31,5 @@ jobs:
       run: npm run lint
     - name: Run tests
       run: npm test
+      env:
+        OTHER_TOKEN: ${{ secrets.OTHER_TOKEN }}
