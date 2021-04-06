@@ -4,10 +4,15 @@ import * as config from './config.js'
 import apn from 'apn'
 
 // Apple APN configuration for sending remote notifications
-const notifications = new apn.Provider({
-    token: process.env.OTHER_TOKEN ? undefined : config.get('apn'),
-    production: false
-})
+let notifications
+
+// Don't set up APN configuration if testing
+if (!process.env.OTHER_TOKEN) {
+    notifications = new apn.Provider({
+        token: config.get('apn'),
+        production: false
+    })
+}
 
 /**
  * Send notifications to all users when the garage has been opened for a long time
