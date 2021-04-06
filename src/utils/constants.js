@@ -1,3 +1,6 @@
+// The URL to the piopener-server
+export const BASE_URL = 'https://jlemon.org/garage'
+
 // How often one can send an open request to the server (in seconds)
 export const OPEN_DELAY = 30
 
