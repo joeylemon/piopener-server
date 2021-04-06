@@ -4,6 +4,12 @@
 
 Our project, titled piopener, is the infrastructure designed to allow us to communicate with our garage door via our API and perform actions upon it. These actions can be opening, closing, checking history, checking current open status, etc.
 
+#### Repositories of piopener
+
+- [piopener-server](https://github.com/joeylemon/piopener-server): Node.js backend
+- [piopener-pi](https://github.com/joeylemon/piopener-pi): Raspberry Pi & Node.js client
+- [piopener-app](https://github.com/joeylemon/piopener-app): Swift & storyboards iOS frontend
+
 ### Why?
 
 After continuously losing, forgetting, or otherwise destroying our garage door openers, my roommate and I decided it would be a fun idea to reverse-engineer our garage door and allow us to do whatever we wanted with it.
@@ -18,4 +24,5 @@ This repository is the code that lives on a dedicated server which serves as the
 
 #### Technologies:
 - Node.js: host a web server which handles all requests to administrate the piopener project
+- Socket.io: maintain real-time communication with [piopener-pi](https://github.com/joeylemon/piopener-pi) to interact with the garage door
 - MySQL: store the open and close history of the garage door, all of the users, and all of the users' settings
