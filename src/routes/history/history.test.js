@@ -4,10 +4,9 @@ import { BASE_URL, HISTORY_PAGE_SIZE } from '../../utils/constants.js'
 import * as config from '../../utils/config.js'
 
 const api = supertest.agent(BASE_URL)
+const token = process.env.OTHER_TOKEN ? process.env.OTHER_TOKEN : config.get('other_token')
 
 describe('History Endpoints', () => {
-    const token = config.get('other_token')
-
     it('should return different pages of history', done => {
         let firstPage
         api

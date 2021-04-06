@@ -4,10 +4,9 @@ import { BASE_URL } from '../../utils/constants.js'
 import * as config from '../../utils/config.js'
 
 const api = supertest.agent(BASE_URL)
+const token = process.env.OTHER_TOKEN ? process.env.OTHER_TOKEN : config.get('other_token')
 
 describe('Garage Endpoints', () => {
-    const token = config.get('other_token')
-
     it('should return the status of the garage', done => {
         api
             .get(`/status/${token}`)

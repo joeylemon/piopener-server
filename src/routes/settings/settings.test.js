@@ -5,9 +5,9 @@ import { BASE_URL } from '../../utils/constants.js'
 import * as config from '../../utils/config.js'
 
 const api = supertest.agent(BASE_URL)
+const token = process.env.OTHER_TOKEN ? process.env.OTHER_TOKEN : config.get('other_token')
 
 describe('Settings Endpoints', () => {
-    const token = config.get('other_token')
     const newValue = Math.random() < 0.5 ? 'true' : 'false'
 
     it('should update notify_on_long_open to a random value', done => {
