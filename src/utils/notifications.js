@@ -5,7 +5,7 @@ import apn from 'apn'
 
 // Apple APN configuration for sending remote notifications
 const notifications = new apn.Provider({
-    token: config.get('apn'),
+    token: process.env.OTHER_TOKEN ? undefined : config.get('apn'),
     production: false
 })
 
