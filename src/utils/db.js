@@ -227,6 +227,6 @@ export async function getLastAutomaticOpen (user) {
  * @param {Object} user The user
  * @returns Promise
  */
- export function updateLastAutomaticOpen (user) {
+export function updateLastAutomaticOpen (user) {
     return query('UPDATE users SET last_automatic_open = ? WHERE id = ?', [Date.now(), user.id])
 }
