@@ -74,6 +74,20 @@ export async function move (user, mode) {
         throw new Error(constants.ERR_ALREADY_OPEN)
     }
 
+    // If the request is sent automatically, check that there wasn't a recent one
+    if (mode === 'open') {
+        const lastOpen = await db.getLastAutomaticOpen(user)
+        const duration = Math.floor((Date.now() - lastOpen) / 1000)
+
+        if (Date.now() - lastOpen < constants.AUTOMATIC_OPEN_DELAY) {
+            logger.print(`don't open garage since user already sent an automatic request ${duration} seconds ago`)
+            throw new Error(constants.ERR_EXCESSIVE_REQUESTS)
+        }
+
+        logger.print(`automatically open the garage for user ${user.name} since it's been ${duration} since the last automatic request`)
+        await db.updateLastAutomaticOpen(user)
+    }
+
     const result = await sendMoveRequest().catch(err => new Error(err))
     if (result instanceof Error) {
         logger.print(`could not move garage: ${result.toString()}`)

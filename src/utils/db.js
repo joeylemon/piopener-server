@@ -211,3 +211,22 @@ export function getNotificationTokens (filterFunc) {
             .catch(err => reject(err))
     })
 }
+
+/**
+ * Get the timestamp of the user's last automatic open request
+ * @param {Object} user The user
+ * @returns Promise
+ */
+export async function getLastAutomaticOpen (user) {
+    const rows = await query('SELECT last_automatic_open FROM users WHERE id = ?', [user.id])
+    return rows[0].last_automatic_open
+}
+
+/**
+ * Update the timestamp of the user's last automatic open request
+ * @param {Object} user The user
+ * @returns Promise
+ */
+ export function updateLastAutomaticOpen (user) {
+    return query('UPDATE users SET last_automatic_open = ? WHERE id = ?', [Date.now(), user.id])
+}

@@ -4,6 +4,9 @@ export const BASE_URL = 'https://jlemon.org/garage'
 // How often one can send an open request to the server (in seconds)
 export const OPEN_DELAY = 30
 
+// How often one can send an automatic open request to the server (in seconds)
+export const AUTOMATIC_OPEN_DELAY = 5 * 60
+
 // How many entries to load per page of history
 export const HISTORY_PAGE_SIZE = 100
 
