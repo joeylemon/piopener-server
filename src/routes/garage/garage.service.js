@@ -89,7 +89,7 @@ export async function move (user, mode) {
     }
 
     // If the request is sent automatically, check that the user didn't just leave the region
-    if (mode === 'open'){
+    if (mode === 'open') {
         const regionExitTime = await db.getRegionExitTime(user)
         const duration = Math.floor((Date.now() - regionExitTime) / 1000)
 
