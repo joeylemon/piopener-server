@@ -71,7 +71,7 @@ export async function move (user, mode) {
     }
 
     // Ensure a correct mode is given
-    if (mode !== 'open' && mode !== 'move') {
+    if (mode !== 'open' && mode !== 'close' && mode !== 'move') {
         logger.print(`move route was requested with invalid mode ${mode}`)
         throw new Error(constants.ERR_INVALID_MODE)
     }
@@ -86,6 +86,12 @@ export async function move (user, mode) {
     if (mode === 'open' && status !== 'closed') {
         logger.print(`request was sent to open garage but status was ${status}`)
         throw new Error(constants.ERR_ALREADY_OPEN)
+    }
+
+    // If the garage is already closed and mode is close-only, do nothing
+    if (mode === 'close' && status !== 'open') {
+        logger.print(`request was sent to close garage but status was ${status}`)
+        throw new Error(constants.ERR_ALREADY_CLOSED)
     }
 
     // If the request is sent automatically, check that the user didn't just leave the region
