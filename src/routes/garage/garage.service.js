@@ -89,7 +89,7 @@ export async function move (user, mode) {
     }
 
     // If the request is sent automatically, check that the user didn't just leave the region
-    if (mode === 'open') {
+    if (mode === 'open'){
         const regionExitTime = await db.getRegionExitTime(user)
         const duration = Math.floor((Date.now() - regionExitTime) / 1000)
 
@@ -98,7 +98,7 @@ export async function move (user, mode) {
             throw new Error(constants.ERR_RECENT_EXIT)
         }
 
-        logger.print(`automatically open the garage for user ${user.name} since it's been ${duration} since they last left the region`)
+        logger.print(`automatically open the garage for user ${user.name} since it's been ${duration} seconds since they last left the region`)
     }
 
     const result = await sendMoveRequest().catch(err => new Error(err))
