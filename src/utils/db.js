@@ -217,9 +217,9 @@ export function getNotificationTokens (filterFunc) {
  * @param {Object} user The user
  * @returns Promise
  */
-export async function getLastAutomaticOpen (user) {
-    const rows = await query('SELECT last_automatic_open FROM users WHERE id = ?', [user.id])
-    return rows[0].last_automatic_open
+export async function getRegionExitTime (user) {
+    const rows = await query('SELECT region_exit_time FROM users WHERE id = ?', [user.id])
+    return rows[0].region_exit_time
 }
 
 /**
@@ -227,6 +227,6 @@ export async function getLastAutomaticOpen (user) {
  * @param {Object} user The user
  * @returns Promise
  */
-export function updateLastAutomaticOpen (user) {
-    return query('UPDATE users SET last_automatic_open = ? WHERE id = ?', [Date.now(), user.id])
+export function updateRegionExitTime (user) {
+    return query('UPDATE users SET region_exit_time = ? WHERE id = ?', [Date.now(), user.id])
 }

@@ -8,22 +8,36 @@ import * as notifications from '../../utils/notifications.js'
 /**
  * Send a request to the Pi to open the garage
  */
-export function sendMoveRequest () {
+export function sendMoveRequest() {
     return sockets.sendMoveRequest()
 }
 
 /**
  * Send a request to the Pi to read the magnetic switch to determine the garage position
  */
-export function getStatus () {
+export function getStatus() {
     return sockets.getStatus()
+}
+
+/**
+ * Update the user's last timestamp of leaving the apartment region
+ */
+export async function updateRegionExitTime(user) {
+    return db.updateRegionExitTime(user)
+}
+
+/**
+ * Get the user's last timestamp of leaving the apartment region
+ */
+export async function getRegionExitTime(user) {
+    return db.getRegionExitTime(user)
 }
 
 /**
  * Endpoint for sending an alert when the garage has been open for a long time
  * https://jlemon.org/garage/sendopenalert
  */
-export async function sendLongOpenAlert (openTime) {
+export async function sendLongOpenAlert(openTime) {
     const status = await notifications.sendLongOpenNotification(openTime).catch(err => new Error(err))
     if (status instanceof Error) {
         logger.print(`could not send open alert: ${status.toString()}`)
@@ -35,7 +49,7 @@ export async function sendLongOpenAlert (openTime) {
  * Endpoint for getting the closed status of the garage door (true if closed, false if open)
  * https://jlemon.org/garage/status
  */
-export async function status () {
+export async function status() {
     const status = await getStatus().catch(err => new Error(err))
     if (status instanceof Error) {
         logger.print(`could not get garage status: ${status.toString()}`)
@@ -49,7 +63,7 @@ export async function status () {
  * Endpoint for moving the garage
  * https://jlemon.org/garage/{move,open}
  */
-export async function move (user, mode) {
+export async function move(user, mode) {
     // Don't allow too many open requests to be sent at one time
     if (!utils.canOpen()) {
         logger.print(`request to move garage failed: another request was sent within the last ${constants.OPEN_DELAY} seconds`)
@@ -74,18 +88,17 @@ export async function move (user, mode) {
         throw new Error(constants.ERR_ALREADY_OPEN)
     }
 
-    // If the request is sent automatically, check that there wasn't a recent one
+    // If the request is sent automatically, check that the user didn't just leave the region
     if (mode === 'open') {
-        const lastOpen = await db.getLastAutomaticOpen(user)
-        const duration = Math.floor((Date.now() - lastOpen) / 1000)
+        const regionExitTime = await db.getRegionExitTime(user)
+        const duration = Math.floor((Date.now() - regionExitTime) / 1000)
 
-        if (Date.now() - lastOpen < constants.AUTOMATIC_OPEN_DELAY) {
-            logger.print(`don't open garage since user already sent an automatic request ${duration} seconds ago`)
-            throw new Error(constants.ERR_EXCESSIVE_REQUESTS)
+        if (Date.now() - regionExitTime < constants.AUTOMATIC_OPEN_DELAY) {
+            logger.print(`don't open garage since user just left the region ${duration} seconds ago`)
+            throw new Error(constants.ERR_RECENT_EXIT)
         }
 
-        logger.print(`automatically open the garage for user ${user.name} since it's been ${duration} since the last automatic request`)
-        await db.updateLastAutomaticOpen(user)
+        logger.print(`automatically open the garage for user ${user.name} since it's been ${duration} since they last left the region`)
     }
 
     const result = await sendMoveRequest().catch(err => new Error(err))
