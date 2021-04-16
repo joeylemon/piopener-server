@@ -1,10 +1,9 @@
 import supertest from 'supertest'
 import should from 'should' // eslint-disable-line no-unused-vars
-import { BASE_URL } from '../../utils/constants.js'
-import * as config from '../../utils/config.js'
+import { config, BASE_URL } from '../../utils/constants.js'
 
 const api = supertest.agent(BASE_URL)
-const token = process.env.OTHER_TOKEN ? process.env.OTHER_TOKEN : config.get('other_token')
+const token = config.other_token
 
 describe('Admin Endpoints', () => {
     it('should update user device token', done => {

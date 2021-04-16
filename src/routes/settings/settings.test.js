@@ -1,11 +1,10 @@
 import supertest from 'supertest'
 import should from 'should' // eslint-disable-line no-unused-vars
 import { ALL } from './settings.service.js'
-import { BASE_URL } from '../../utils/constants.js'
-import * as config from '../../utils/config.js'
+import { config, BASE_URL } from '../../utils/constants.js'
 
 const api = supertest.agent(BASE_URL)
-const token = process.env.OTHER_TOKEN ? process.env.OTHER_TOKEN : config.get('other_token')
+const token = config.other_token
 
 describe('Settings Endpoints', () => {
     const newValue = Math.random() < 0.5 ? 'true' : 'false'

@@ -1,5 +1,6 @@
 import { Server } from 'socket.io'
-import * as config from './config.js'
+
+import { config } from './constants.js'
 import * as logger from './logger.js'
 
 let server
@@ -19,7 +20,7 @@ export function init (httpServer) {
     })
 
     server.use((socket, next) => {
-        if (socket.handshake.auth.token === config.get('secret')) {
+        if (socket.handshake.auth.token === config.secret) {
             clientSocket = socket
             next()
         } else {

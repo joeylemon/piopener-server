@@ -1,3 +1,11 @@
+if (!process.env.PIOPENER_CONFIG) {
+    console.error('missing PIOPENER_CONFIG environment variable')
+    process.exit(1)
+}
+
+// The config object
+export const config = JSON.parse(process.env.PIOPENER_CONFIG)
+
 // The URL to the piopener-server
 export const BASE_URL = 'https://jlemon.org/garage'
 

@@ -1,6 +1,6 @@
 import * as db from './db.js'
 import * as logger from './logger.js'
-import * as config from './config.js'
+import { config } from './constants.js'
 import apn from 'apn'
 
 // Apple APN configuration for sending remote notifications
@@ -9,7 +9,7 @@ let notifications
 // Don't set up APN configuration if testing
 if (!process.env.TESTING) {
     notifications = new apn.Provider({
-        token: config.get('apn'),
+        token: config.apn,
         production: false
     })
 }

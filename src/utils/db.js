@@ -1,21 +1,15 @@
 import mysql from 'mysql'
 import moment from 'moment-timezone'
-import * as config from './config.js'
 import * as constants from './constants.js'
 import * as settings from '../routes/settings/settings.service.js'
 import * as notify from './notifications.js'
 
-let pool
-
-// Don't set up mysql if testing
-if (!process.env.TESTING) {
-    pool = mysql.createPool({
-        host: config.get('mysql.host'),
-        user: config.get('mysql.user'),
-        password: config.get('mysql.pass'),
-        database: config.get('mysql.db')
-    })
-}
+const pool = mysql.createPool({
+    host: constants.config.mysql.host,
+    user: constants.config.mysql.user,
+    password: constants.config.mysql.pass,
+    database: constants.config.mysql.db
+})
 
 /**
  * Perform a query on the database
