@@ -33,3 +33,4 @@ jobs:
       run: npm test
       env:
         PIOPENER_CONFIG: ${{ secrets.PIOPENER_CONFIG }}
+        TESTING: true
